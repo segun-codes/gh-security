@@ -2,16 +2,25 @@ name: Label Issues (Script Injection Example)
 on:
   issues:
     types:
-      - opened
+      - opened 
 jobs:
   assign-label:
     runs-on: ubuntu-latest
     steps:
       - name: Assign label
+        env:
+          TITLE: ${{ github.event.issue.title }} # we are using environment variable technique to prevent script injection problem
         run: |
-          issue_title="${{ github.event.issue.title }}"
-          if [[ "$issue_title" == *"bug"* ]]; then
+          if [[ "$TITLE" == *"bug"* ]]; then 
           echo "Issue is about a bug!"
           else
           echo "Issue is not about a bug"
-          fi
+          fi  
+      # VULNERABLE SCRIPT
+      #run: |
+         # issue_title="${{ github.event.issue.title }}"  # USER CAN INJECT MALICIOUS COMMAND BY USING CODE AS "title" WHEN HE WANTS TO OPEN AN ISSUE
+         # if [[ "$issue_title" == *"bug"* ]]; then
+         # echo "Issue is about a bug!"
+        # else
+        # echo "Issue is not about a bug"
+        # fi
